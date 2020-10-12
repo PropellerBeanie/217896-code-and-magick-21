@@ -11,15 +11,17 @@ const SHADOW_COLOR = `rgba(0, 0, 0, 0.3)`;
 const SHADOW_OFFSET = 10;
 const USER_COLOR = `rgba(255, 0, 0, 1)`;
 const FONT_SIZE = 16;
+const FONT_FAMILY = `PT Mono`;
+const FONT = `${FONT_SIZE}px ${FONT_FAMILY}`;
 const TEXT_COLOR = `#000`;
 const TEXT_MARGIN = FONT_SIZE / 2;
-let colMaxHeight = CLOUD_HEIGHT - CLOUD_PADDING_X - 4 * FONT_SIZE - 4 * TEXT_MARGIN;
-const COL_WIDTH = 40;
-const COL_MARGIN = 50;
+const COLUMN_MAX_HEIGHT = CLOUD_HEIGHT - CLOUD_PADDING_X - 4 * FONT_SIZE - 4 * TEXT_MARGIN;
+const COLUMN_WIDTH = 40;
+const COLUMN_MARGIN = 50;
 
-let renderRect = function (ctx, x, y, color) {
+let renderRect = function (ctx, x, y, width, height, color) {
   ctx.fillStyle = color;
-  ctx.fillRect(x, y, CLOUD_WIDTH, CLOUD_HEIGHT);
+  ctx.fillRect(x, y, width, height);
 };
 
 let getMaxElement = function (arr) {
@@ -33,20 +35,40 @@ let getMaxElement = function (arr) {
 };
 
 let getRandomNumber = function (max) {
-  return (Math.floor(Math.random() * max) + 1);
+  return (Math.floor(Math.random() * (max + 1)));
+};
+
+let getRandomColor = function () {
+  return (`hsl(240, ${getRandomNumber(10) * 10}%, 50%)`);
 };
 
 let getUserColor = function (userName) {
   if (userName === `Вы`) {
     return (USER_COLOR);
   } else {
-    return (`hsl(240, ${getRandomNumber(10) * 10}%, 50%)`);
+    return (getRandomColor());
   }
 };
 
+let renderText = function (ctx, color, text, x, y) {
+  ctx.fillStyle = color;
+  ctx.font = FONT;
+  ctx.fillText(
+      text,
+      x,
+      y
+  );
+};
+
+let renderColumn = function (ctx, maxTime, name, time, x, yTime, yColumn, yName) {
+  renderText(ctx, TEXT_COLOR, name, x, yName);
+  renderRect(ctx, x, yColumn, COLUMN_WIDTH, -COLUMN_MAX_HEIGHT / maxTime * time, getUserColor(name));
+  renderText(ctx, TEXT_COLOR, Math.floor(time), x, yTime);
+};
+
 window.renderStatistics = function (ctx, names, times) {
-  renderRect(ctx, CLOUD_X + SHADOW_OFFSET, CLOUD_Y + SHADOW_OFFSET, SHADOW_COLOR);
-  renderRect(ctx, CLOUD_X, CLOUD_Y, CLOUD_COLOR);
+  renderRect(ctx, CLOUD_X + SHADOW_OFFSET, CLOUD_Y + SHADOW_OFFSET, CLOUD_WIDTH, CLOUD_HEIGHT, SHADOW_COLOR);
+  renderRect(ctx, CLOUD_X, CLOUD_Y, CLOUD_WIDTH, CLOUD_HEIGHT, CLOUD_COLOR);
 
   ctx.fillStyle = TEXT_COLOR;
   ctx.fillText(`Ура вы победили!`, CLOUD_X + CLOUD_PADDING_X, CLOUD_Y + CLOUD_PADDING_Y + FONT_SIZE);
@@ -55,26 +77,15 @@ window.renderStatistics = function (ctx, names, times) {
   let maxTime = getMaxElement(times);
 
   for (let i = 0; i < names.length; i++) {
-    ctx.fillStyle = TEXT_COLOR;
-    ctx.fillText(
+    renderColumn(
+        ctx,
+        maxTime,
         names[i],
-        CLOUD_X + CLOUD_PADDING_X + i * (COL_WIDTH + COL_MARGIN),
-        CLOUD_Y + CLOUD_PADDING_Y + 4 * FONT_SIZE + 3 * TEXT_MARGIN + colMaxHeight
-    );
-
-    ctx.fillStyle = getUserColor(names[i]);
-    ctx.fillRect(
-        CLOUD_X + CLOUD_PADDING_X + i * (COL_WIDTH + COL_MARGIN),
-        CLOUD_Y + CLOUD_PADDING_Y + 3 * FONT_SIZE + 3 * TEXT_MARGIN + colMaxHeight,
-        COL_WIDTH,
-        -colMaxHeight / maxTime * times[i]
-    );
-
-    ctx.fillStyle = TEXT_COLOR;
-    ctx.fillText(
-        Math.floor(times[i]),
-        CLOUD_X + CLOUD_PADDING_X + i * (COL_WIDTH + COL_MARGIN),
-        CLOUD_Y + CLOUD_PADDING_Y + 2 * FONT_SIZE + 3 * TEXT_MARGIN + colMaxHeight * (1 - 1 / maxTime * times[i])
+        times[i],
+        CLOUD_X + CLOUD_PADDING_X + i * (COLUMN_WIDTH + COLUMN_MARGIN),
+        CLOUD_Y + CLOUD_PADDING_Y + 2 * FONT_SIZE + 3 * TEXT_MARGIN + COLUMN_MAX_HEIGHT * (1 - 1 / maxTime * times[i]),
+        CLOUD_Y + CLOUD_PADDING_Y + 3 * FONT_SIZE + 3 * TEXT_MARGIN + COLUMN_MAX_HEIGHT,
+        CLOUD_Y + CLOUD_PADDING_Y + 4 * FONT_SIZE + 3 * TEXT_MARGIN + COLUMN_MAX_HEIGHT
     );
   }
 };
