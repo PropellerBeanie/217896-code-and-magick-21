@@ -15,7 +15,6 @@ let similarList = userDialog.querySelector(`.setup-similar-list`);
 userDialog.classList.remove(`hidden`);
 
 let getRandomElNum = function (array) {
-  // return(Math.floor(Math.random() * array.length));
   return (getRandomNumber(array.length - 1));
 };
 
