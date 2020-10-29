@@ -15,7 +15,7 @@ let similarList = userDialog.querySelector(`.setup-similar-list`);
 userDialog.classList.remove(`hidden`);
 
 let getRandomElNum = function (array) {
-  return (getRandomNumber(array.length - 1));
+  return getRandomNumber(array.length - 1);
 };
 
 let getWizardObject = function (names, lastNames, coatColors, eyesColors) {
@@ -24,7 +24,7 @@ let getWizardObject = function (names, lastNames, coatColors, eyesColors) {
     coatColor: coatColors[getRandomElNum(coatColors)],
     eyesColor: eyesColors[getRandomElNum(eyesColors)]
   };
-  return (wizardObject);
+  return wizardObject;
 };
 
 let getSimilarWizardsArr = function (num) {
@@ -32,7 +32,7 @@ let getSimilarWizardsArr = function (num) {
   for (let i = 0; i < num; i++) {
     wizardsArr[i] = getWizardObject(NAMES, LAST_NAMES, COAT_COLORS, EYES_COLORS);
   }
-  return (wizardsArr);
+  return wizardsArr;
 };
 
 let renderWizard = function (wizardObject) {
@@ -40,7 +40,7 @@ let renderWizard = function (wizardObject) {
   wizardElement.querySelector(`.setup-similar-label`).textContent = wizardObject.name;
   wizardElement.querySelector(`.wizard-coat`).style.fill = wizardObject.coatColor;
   wizardElement.querySelector(`.wizard-eyes`).style.fill = wizardObject.eyesColor;
-  return (wizardElement);
+  return wizardElement;
 };
 
 let renderSimilarWizards = function () {
@@ -50,7 +50,7 @@ let renderSimilarWizards = function () {
   for (let similarWizard of wizardsArr) {
     fragment.appendChild(renderWizard(similarWizard));
   }
-  return (fragment);
+  return fragment;
 };
 
 similarList.appendChild(renderSimilarWizards());
